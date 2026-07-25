@@ -18,8 +18,11 @@ window.addEventListener('load',()=>{
     return noteAudioContext;
   }
 
+  function noteSoundEnabled(){const control=document.querySelector('#noteSoundToggle');return control?control.checked:true}
+  function noteSoundVolume(){const control=document.querySelector('#noteSoundVolume');return control?Math.max(0,Math.min(1,(Number(control.value)||0)/100)):.55}
+
   function playScoreClick(type,phase='start',simultaneous=1){
-    if(!noteAudioContext||noteAudioContext.state!=='running')return;
+    if(!noteSoundEnabled()||!noteAudioContext||noteAudioContext.state!=='running')return;
     const now=noteAudioContext.currentTime;
     const oscillator=noteAudioContext.createOscillator();
     const gain=noteAudioContext.createGain();
@@ -34,7 +37,7 @@ window.addEventListener('load',()=>{
     oscillator.type=preset.wave;
     oscillator.frequency.setValueAtTime(preset.from,now);
     oscillator.frequency.exponentialRampToValueAtTime(Math.max(40,preset.to),now+preset.duration);
-    const peak=.072/Math.sqrt(Math.max(1,simultaneous));
+    const peak=.13*noteSoundVolume()/Math.sqrt(Math.max(1,simultaneous));
     gain.gain.setValueAtTime(.0001,now);
     gain.gain.exponentialRampToValueAtTime(peak,now+.004);
     gain.gain.exponentialRampToValueAtTime(.0001,now+preset.duration);
@@ -86,7 +89,7 @@ window.addEventListener('load',()=>{
     if(!running)return;
     currentTime=getCurrentTime();
     const rawTick=rawTimeToTick(currentTime);
-    if(lastAudibleTick==null||rawTick<lastAudibleTick){lastAudibleTick=rawTick-.001;}
+    if(lastAudibleTick==null||rawTick<lastAudibleTick){lastAudibleTick=rawTick-1;}
     playCrossedNotes(lastAudibleTick,rawTick);
     lastAudibleTick=rawTick;
     updateTimerUI();
@@ -98,7 +101,7 @@ window.addEventListener('load',()=>{
   async function activateScoreSound(){
     if(!running)return;
     await ensureNoteAudioContext();
-    lastAudibleTick=rawTimeToTick(getCurrentTime())-.001;
+    lastAudibleTick=rawTimeToTick(getCurrentTime())-1;
   }
   $('#timerButton').addEventListener('click',activateScoreSound);
   $('#playBtn').addEventListener('click',activateScoreSound);
