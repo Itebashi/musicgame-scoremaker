@@ -3,923 +3,126 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Musicgame Scoremaker — Layout Prototype v0.1</title>
-  <style>
-    :root {
-      color-scheme: dark;
-      --bg: #0b1020;
-      --panel: #121a2d;
-      --panel-2: #172238;
-      --panel-3: #0f1728;
-      --line: #2a3854;
-      --line-strong: #415373;
-      --text: #f3f7ff;
-      --muted: #91a0b8;
-      --cyan: #36d6ff;
-      --cyan-2: #0e9fc7;
-      --lime: #9af36a;
-      --yellow: #ffd75a;
-      --pink: #ff6fcf;
-      --danger: #ff6b78;
-      --shadow: 0 18px 48px rgba(0, 0, 0, .28);
-      --radius: 16px;
-    }
-
-    * { box-sizing: border-box; }
-    html, body { height: 100%; }
-    body {
-      margin: 0;
-      overflow: hidden;
-      font-family: "Segoe UI", "Yu Gothic UI", "Meiryo", sans-serif;
-      background:
-        radial-gradient(circle at 22% -10%, rgba(54,214,255,.11), transparent 34%),
-        radial-gradient(circle at 90% 15%, rgba(255,111,207,.08), transparent 30%),
-        var(--bg);
-      color: var(--text);
-    }
-
-    button, select, input { font: inherit; }
-    button { color: inherit; }
-
-    .app {
-      height: 100%;
-      display: grid;
-      grid-template-rows: 64px minmax(0, 1fr) 42px;
-    }
-
-    .topbar {
-      display: flex;
-      align-items: center;
-      gap: 18px;
-      padding: 0 20px;
-      border-bottom: 1px solid var(--line);
-      background: rgba(11, 16, 32, .88);
-      backdrop-filter: blur(18px);
-      z-index: 20;
-    }
-
-    .brand {
-      min-width: 278px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .brand-mark {
-      width: 34px;
-      height: 34px;
-      border-radius: 11px;
-      display: grid;
-      place-items: center;
-      background: linear-gradient(145deg, rgba(54,214,255,.25), rgba(54,214,255,.06));
-      border: 1px solid rgba(54,214,255,.42);
-      color: var(--cyan);
-      box-shadow: 0 0 24px rgba(54,214,255,.13);
-      font-weight: 900;
-    }
-
-    .brand-title { font-weight: 800; letter-spacing: .01em; }
-    .brand-sub { margin-top: 2px; color: var(--muted); font-size: 11px; }
-
-    .project-field {
-      min-width: 220px;
-      height: 38px;
-      padding: 0 13px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      border: 1px solid var(--line);
-      border-radius: 11px;
-      background: var(--panel-3);
-    }
-    .project-field span:first-child { color: var(--muted); font-size: 12px; }
-    .project-field strong { font-size: 13px; }
-
-    .top-spacer { flex: 1; }
-
-    .review-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 12px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,215,90,.35);
-      background: rgba(255,215,90,.08);
-      color: #ffe48c;
-      font-size: 12px;
-      font-weight: 700;
-      white-space: nowrap;
-    }
-
-    .top-action {
-      height: 36px;
-      padding: 0 14px;
-      border: 1px solid var(--line);
-      border-radius: 10px;
-      background: var(--panel-2);
-      cursor: pointer;
-    }
-    .top-action:hover { border-color: var(--line-strong); }
-    .top-action.primary {
-      background: linear-gradient(180deg, #1db7dc, #1186aa);
-      border-color: #3bdcff;
-      font-weight: 700;
-    }
-
-    .workspace {
-      min-height: 0;
-      display: grid;
-      grid-template-columns: 288px minmax(620px, 1fr) 300px;
-      gap: 12px;
-      padding: 12px;
-    }
-
-    .panel {
-      min-height: 0;
-      background: linear-gradient(180deg, rgba(23,34,56,.96), rgba(17,26,45,.98));
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      overflow: hidden;
-    }
-
-    .left-panel, .right-panel { display: flex; flex-direction: column; }
-
-    .mode-tabs {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      padding: 10px;
-      gap: 6px;
-      border-bottom: 1px solid var(--line);
-    }
-
-    .mode-tab {
-      height: 40px;
-      border: 1px solid transparent;
-      border-radius: 10px;
-      background: transparent;
-      color: var(--muted);
-      cursor: pointer;
-      font-weight: 700;
-      font-size: 12px;
-    }
-    .mode-tab:hover { background: rgba(255,255,255,.03); }
-    .mode-tab.active {
-      color: var(--text);
-      border-color: rgba(54,214,255,.42);
-      background: rgba(54,214,255,.09);
-    }
-
-    .left-scroll, .right-scroll {
-      min-height: 0;
-      overflow: auto;
-      padding: 14px;
-    }
-
-    .section { margin-bottom: 18px; }
-    .section-title {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 9px;
-      color: #dce7f8;
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: .04em;
-    }
-    .section-title small { color: var(--muted); font-weight: 500; }
-
-    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .field {
-      padding: 8px 10px;
-      border: 1px solid var(--line);
-      border-radius: 10px;
-      background: var(--panel-3);
-    }
-    .field label { display: block; color: var(--muted); font-size: 10px; margin-bottom: 4px; }
-    .field strong { font-size: 14px; }
-
-    .sync-card {
-      padding: 12px;
-      border: 1px solid rgba(54,214,255,.24);
-      border-radius: 12px;
-      background: rgba(54,214,255,.045);
-    }
-
-    .sync-status {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 10px;
-      color: var(--muted);
-      font-size: 12px;
-    }
-    .dot { width: 8px; height: 8px; border-radius: 50%; background: #66728a; }
-    .dot.live { background: var(--lime); box-shadow: 0 0 12px rgba(154,243,106,.7); }
-
-    .large-button {
-      width: 100%;
-      min-height: 48px;
-      border: 1px solid var(--line-strong);
-      border-radius: 12px;
-      background: linear-gradient(180deg, #253653, #1b2942);
-      cursor: pointer;
-      font-weight: 800;
-    }
-    .large-button:hover { border-color: var(--cyan); }
-    .large-button.live {
-      border-color: rgba(255,107,120,.8);
-      background: rgba(255,107,120,.12);
-      color: #ffb2ba;
-    }
-
-    .key-list { display: grid; gap: 7px; }
-    .key-item {
-      display: grid;
-      grid-template-columns: 66px 1fr;
-      align-items: center;
-      gap: 8px;
-      color: var(--muted);
-      font-size: 12px;
-    }
-    kbd {
-      display: inline-flex;
-      justify-content: center;
-      align-items: center;
-      height: 28px;
-      border: 1px solid var(--line-strong);
-      border-bottom-width: 3px;
-      border-radius: 7px;
-      background: #202e49;
-      color: var(--text);
-      font-size: 11px;
-      font-weight: 800;
-    }
-
-    .event-list { display: grid; gap: 6px; }
-    .event-item {
-      display: grid;
-      grid-template-columns: 58px 1fr auto;
-      gap: 8px;
-      align-items: center;
-      padding: 8px;
-      border-radius: 8px;
-      background: rgba(255,255,255,.025);
-      color: var(--muted);
-      font-size: 11px;
-    }
-    .event-item strong { color: var(--text); font-variant-numeric: tabular-nums; }
-    .event-item .delta { color: #aac0dd; }
-
-    .editor-panel {
-      display: grid;
-      grid-template-rows: 56px minmax(0, 1fr) 112px;
-    }
-
-    .editor-toolbar {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 9px 12px;
-      border-bottom: 1px solid var(--line);
-    }
-
-    .tool-group {
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      padding-right: 10px;
-      border-right: 1px solid var(--line);
-    }
-    .tool-group:last-child { border-right: 0; }
-    .tool-label { color: var(--muted); font-size: 10px; }
-    .tool-value {
-      height: 34px;
-      min-width: 70px;
-      padding: 0 9px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      border: 1px solid var(--line);
-      border-radius: 9px;
-      background: var(--panel-3);
-      font-weight: 700;
-      font-size: 12px;
-    }
-    select.tool-value { color: var(--text); }
-
-    .icon-button {
-      width: 34px;
-      height: 34px;
-      border: 1px solid var(--line);
-      border-radius: 9px;
-      background: var(--panel-3);
-      cursor: pointer;
-    }
-    .icon-button:hover { border-color: var(--line-strong); }
-
-    .editor-stage {
-      min-height: 0;
-      position: relative;
-      overflow: auto;
-      background:
-        linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px) 0 0 / 32px 32px,
-        #0d1424;
-    }
-
-    .canvas-wrap {
-      min-height: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: stretch;
-      padding: 28px 48px;
-    }
-
-    .score-shell {
-      position: relative;
-      width: min(780px, 100%);
-      min-height: 920px;
-      border: 1px solid #495979;
-      border-radius: 6px;
-      background: #111a2f;
-      box-shadow: 0 24px 60px rgba(0,0,0,.34);
-      overflow: hidden;
-      user-select: none;
-    }
-
-    .score-grid {
-      position: absolute;
-      inset: 0;
-      background-image:
-        linear-gradient(to right, rgba(142,157,188,.42) 1px, transparent 1px),
-        linear-gradient(to top, rgba(142,157,188,.28) 1px, transparent 1px);
-      background-size: calc(100% / 12) 100%, 100% calc(100% / var(--division-lines, 32));
-    }
-
-    .measure-line {
-      position: absolute;
-      left: 0;
-      right: 0;
-      height: 2px;
-      background: rgba(240,246,255,.94);
-      box-shadow: 0 0 12px rgba(255,255,255,.2);
-    }
-    .measure-line.middle { bottom: 50%; }
-    .measure-line.top { top: 0; }
-    .measure-line.bottom { bottom: 0; }
-
-    .measure-tag {
-      position: absolute;
-      right: 10px;
-      transform: translateY(-50%);
-      padding: 3px 7px;
-      border-radius: 7px;
-      background: rgba(11,16,32,.78);
-      color: #eaf2ff;
-      font-size: 12px;
-      font-weight: 800;
-    }
-    .measure-tag.m1 { bottom: calc(0% - 8px); transform: none; }
-    .measure-tag.m2 { bottom: calc(50% - 8px); transform: none; }
-    .measure-tag.m3 { top: 8px; transform: none; }
-
-    .playhead {
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 27.5%;
-      height: 2px;
-      background: var(--lime);
-      box-shadow: 0 0 12px rgba(154,243,106,.5);
-      z-index: 6;
-    }
-    .playhead::after {
-      content: "▶";
-      position: absolute;
-      right: -28px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--lime);
-      font-size: 20px;
-    }
-
-    .note {
-      position: absolute;
-      height: 16px;
-      border-radius: 5px;
-      z-index: 5;
-      cursor: pointer;
-      border: 1px solid rgba(255,255,255,.35);
-      box-shadow: 0 4px 12px rgba(0,0,0,.26);
-    }
-    .note.tap { background: linear-gradient(180deg, #59e5ff, #17abd2); }
-    .note.critical { background: linear-gradient(180deg, #ffe979, #e5b92d); }
-    .note.flick { background: linear-gradient(180deg, #ff95df, #e94ebd); }
-    .note.long { background: linear-gradient(180deg, #b6ff8d, #5fce5a); }
-    .note.selected { outline: 3px solid white; outline-offset: 3px; }
-    .note.long::after {
-      content: "";
-      position: absolute;
-      left: 50%;
-      top: 100%;
-      height: var(--link-height, 120px);
-      width: 2px;
-      border-left: 2px dashed rgba(154,243,106,.8);
-    }
-    .note.long.end::after { display: none; }
-
-    .empty-hint {
-      position: absolute;
-      left: 18px;
-      top: 18px;
-      padding: 7px 10px;
-      border-radius: 8px;
-      background: rgba(11,16,32,.72);
-      color: var(--muted);
-      font-size: 11px;
-      z-index: 4;
-    }
-
-    .overview {
-      border-top: 1px solid var(--line);
-      padding: 10px 12px;
-      display: grid;
-      grid-template-columns: 100px minmax(0, 1fr) 180px;
-      gap: 12px;
-      align-items: center;
-      background: #10182a;
-    }
-
-    .transport { display: flex; gap: 6px; }
-    .transport button {
-      width: 36px;
-      height: 36px;
-      border-radius: 9px;
-      border: 1px solid var(--line);
-      background: var(--panel-2);
-      cursor: pointer;
-    }
-    .transport button.main { width: 44px; border-color: rgba(54,214,255,.42); color: var(--cyan); }
-
-    .minimap {
-      height: 66px;
-      display: grid;
-      grid-template-columns: repeat(16, 1fr);
-      gap: 4px;
-      align-items: end;
-      padding: 6px;
-      border: 1px solid var(--line);
-      border-radius: 10px;
-      background: #0d1424;
-    }
-    .mini-bar {
-      min-height: 12px;
-      border-radius: 3px;
-      background: rgba(54,214,255,.38);
-    }
-    .mini-bar.hot { background: rgba(255,111,207,.62); }
-    .mini-window {
-      position: absolute;
-      inset: 5px auto 5px 24%;
-      width: 18%;
-      border: 2px solid rgba(255,255,255,.75);
-      border-radius: 7px;
-      pointer-events: none;
-    }
-    .minimap-wrap { position: relative; }
-
-    .time-info { text-align: right; }
-    .time-info strong { display: block; font-size: 15px; font-variant-numeric: tabular-nums; }
-    .time-info span { color: var(--muted); font-size: 11px; }
-
-    .palette { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .palette-button {
-      min-height: 56px;
-      padding: 9px;
-      border: 1px solid var(--line);
-      border-radius: 11px;
-      background: var(--panel-3);
-      cursor: pointer;
-      text-align: left;
-    }
-    .palette-button:hover { border-color: var(--line-strong); }
-    .palette-button.active { outline: 2px solid rgba(255,255,255,.72); outline-offset: -3px; }
-    .palette-swatch { width: 42px; height: 9px; border-radius: 4px; margin-bottom: 8px; }
-    .palette-button strong { font-size: 12px; }
-    .palette-button small { display: block; margin-top: 3px; color: var(--muted); font-size: 10px; }
-
-    .property-list { display: grid; gap: 8px; }
-    .property-row {
-      display: grid;
-      grid-template-columns: 88px 1fr;
-      align-items: center;
-      gap: 8px;
-      color: var(--muted);
-      font-size: 11px;
-    }
-    .property-row input, .property-row select {
-      width: 100%;
-      height: 34px;
-      padding: 0 8px;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: var(--panel-3);
-      color: var(--text);
-    }
-
-    .transfer-card {
-      padding: 12px;
-      border-radius: 12px;
-      background: #0e1728;
-      border: 1px solid var(--line);
-    }
-    .transfer-row {
-      display: grid;
-      grid-template-columns: 20px 1fr;
-      gap: 8px;
-      padding: 8px 0;
-      border-bottom: 1px solid rgba(42,56,84,.7);
-      color: #c9d5e8;
-      font-size: 11px;
-    }
-    .transfer-row:last-child { border-bottom: 0; }
-    .transfer-row input { accent-color: var(--cyan); }
-
-    .hint-box {
-      padding: 10px;
-      border-radius: 10px;
-      border: 1px dashed var(--line-strong);
-      color: var(--muted);
-      font-size: 11px;
-      line-height: 1.65;
-    }
-
-    .statusbar {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      padding: 0 16px;
-      border-top: 1px solid var(--line);
-      background: #090e1a;
-      color: var(--muted);
-      font-size: 11px;
-    }
-    .statusbar .good { color: #b8f29d; }
-    .statusbar .spacer { flex: 1; }
-
-    .toast {
-      position: fixed;
-      left: 50%;
-      bottom: 58px;
-      transform: translate(-50%, 16px);
-      padding: 10px 14px;
-      border: 1px solid var(--line-strong);
-      border-radius: 10px;
-      background: #121a2d;
-      box-shadow: var(--shadow);
-      opacity: 0;
-      pointer-events: none;
-      transition: .18s ease;
-      z-index: 50;
-      font-size: 12px;
-    }
-    .toast.show { opacity: 1; transform: translate(-50%, 0); }
-
-    @media (max-width: 1280px) {
-      .workspace { grid-template-columns: 250px minmax(560px, 1fr) 260px; }
-      .brand { min-width: 235px; }
-      .project-field { display: none; }
-    }
-  </style>
+  <title>Musicgame Scoremaker — Pre-release Check v0.11</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div class="app">
-    <header class="topbar">
-      <div class="brand">
-        <div class="brand-mark">♪</div>
-        <div>
-          <div class="brand-title">Musicgame Scoremaker</div>
-          <div class="brand-sub">外部再生に合わせて作る譜面下書きツール</div>
-        </div>
+<div class="app">
+  <header class="topbar">
+    <div class="brand"><div class="brand-mark">♪</div><div><div class="brand-title">Musicgame Scoremaker</div><div class="brand-sub">ホロドリへ手作業で転記するためのローカル譜面下書き</div></div></div>
+    <div class="badge">完成前確認版 v0.11</div><div class="spacer"></div>
+    <button class="btn" id="importProjectBtn">JSONを開く</button><input id="projectFile" type="file" accept="application/json,.json" hidden>
+    <button class="btn" id="exportProjectBtn">JSON保存</button>
+    <button class="btn primary" id="manualSaveBtn">この端末に保存</button>
+  </header>
+
+  <main class="workspace">
+    <aside class="panel side">
+      <div class="tabs"><button class="tab active" data-mode="capture">タイミング</button><button class="tab" data-mode="edit">譜面編集</button><button class="tab" data-mode="transfer">転記</button></div>
+      <div class="scroll">
+        <section class="section">
+          <div class="section-title">楽曲設定 <small>画面右下の値を入力</small></div>
+          <div class="grid2">
+            <div class="field full"><label>曲名</label><input id="titleInput" value="Overdose / 譜面案"></div>
+            <div class="field"><label>BPM</label><input id="bpmInput" type="number" min="1" max="999" step="0.01" value="118"></div>
+            <div class="field"><label>総小節</label><input id="measureInput" type="number" min="1" max="300" step="1" value="62"></div>
+            <div class="field"><label>拍子・分子</label><input id="numeratorInput" type="number" min="1" max="16" step="1" value="4"></div>
+            <div class="field"><label>拍子・分母</label><select id="denominatorInput"><option>4</option><option>8</option><option>16</option></select></div>
+            <div class="field full"><label>第1小節頭の時間（秒）</label><input id="offsetInput" type="number" step="0.001" value="0"></div>
+          </div>
+        </section>
+
+        <section class="section capture-only">
+          <div class="section-title">音の取り方 <small>どちらでも可</small></div>
+          <div class="audio-card">
+            <label class="file-button">ローカル音源を選ぶ<input id="audioFile" type="file" accept="audio/*"></label>
+            <div class="audio-name" id="audioName">未選択：外部再生タイマーを使います</div>
+            <audio id="audio" preload="metadata"></audio>
+          </div>
+        </section>
+
+        <section class="section capture-only">
+          <div class="section-title">再生／外部同期</div>
+          <div class="timer-card">
+            <div class="statusline"><span class="dot" id="timerDot"></span><span id="timerStatus">停止中</span></div>
+            <button class="bigbtn" id="timerButton">計測を開始</button>
+            <div class="grid2" style="margin-top:8px"><div class="field"><label>現在秒</label><input id="seekInput" type="number" step="0.001" value="0"></div><div class="field"><label>現在位置</label><input id="positionText" value="#1  0/8" readonly></div><div class="field"><label>ノーツ音</label><label style="display:flex;align-items:center;gap:8px;height:29px;color:var(--text);font-size:11px"><input id="noteSoundToggle" type="checkbox" checked style="width:auto;height:auto">再生時に鳴らす</label></div><div class="field"><label>ノーツ音量</label><input id="noteSoundVolume" type="range" min="0" max="100" value="55" step="1"></div></div>
+          </div>
+        </section>
+
+        <section class="section capture-only">
+          <div class="section-title">入力キー</div>
+          <div class="keylist"><div class="keyrow"><kbd>Space</kbd><span>通常ノーツ</span></div><div class="keyrow"><kbd>C</kbd><span>黄色ノーツ</span></div><div class="keyrow"><kbd>F</kbd><span>フリック</span></div><div class="keyrow"><kbd>L</kbd><span>ロング開始／終了</span></div><div class="keyrow"><kbd>Backspace</kbd><span>直前を削除</span></div></div>
+        </section>
+
+        <section class="section capture-only"><div class="section-title">直近の入力 <small id="noteCountLabel">0件</small></div><div class="eventlist" id="eventList"></div></section>
+
+        <section class="section edit-only" hidden>
+          <div class="section-title">編集ルール</div>
+          <div class="hint">配置・単選択・範囲選択・消しゴムを切り替えます。範囲選択後はまとめて移動・複製・削除できます。すべての位置はグリッドに吸着します。</div>
+        </section>
+
+        <section class="section transfer-only" hidden>
+          <div class="section-title">転記する小節</div>
+          <div class="grid2"><div class="field"><label>小節</label><input id="transferMeasureInput" type="number" min="1" value="1"></div><div class="field"><label>進捗</label><input id="transferProgress" value="0%" readonly></div></div>
+          <div class="row-buttons"><button class="btn" id="prevMeasureBtn">前の小節</button><button class="btn" id="nextMeasureBtn">次の小節</button></div>
+        </section>
+
+        <section class="section">
+          <div class="section-title">参考スクリーンショット <small>ローカル表示のみ</small></div>
+          <label class="file-button">画像を追加<input id="referenceFiles" type="file" accept="image/*" multiple></label>
+          <div class="reference-list" id="referenceList" style="margin-top:8px"></div>
+        </section>
       </div>
-      <div class="project-field"><span>プロジェクト</span><strong>Overdose / EXPERT案</strong></div>
-      <div class="top-spacer"></div>
-      <div class="review-badge">● レイアウト確認版 v0.1</div>
-      <button class="top-action" id="undoBtn">元に戻す</button>
-      <button class="top-action">プロジェクトを開く</button>
-      <button class="top-action primary" id="saveBtn">保存イメージ</button>
-    </header>
+    </aside>
 
-    <main class="workspace">
-      <aside class="panel left-panel">
-        <div class="mode-tabs">
-          <button class="mode-tab active" data-mode="capture">タイミング</button>
-          <button class="mode-tab" data-mode="edit">譜面編集</button>
-          <button class="mode-tab" data-mode="transfer">転記</button>
-        </div>
-        <div class="left-scroll">
-          <div class="section">
-            <div class="section-title">楽曲設定 <small>手入力</small></div>
-            <div class="field-row">
-              <div class="field"><label>BPM</label><strong>118.00</strong></div>
-              <div class="field"><label>拍子</label><strong>4 / 4</strong></div>
-              <div class="field"><label>総小節</label><strong>62</strong></div>
-              <div class="field"><label>開始オフセット</label><strong>0.000 s</strong></div>
-            </div>
-          </div>
+    <section class="panel editor">
+      <div class="toolbar">
+        <div class="group"><span class="tool-label">操作</span><div class="edit-tools"><button class="edit-tool active" data-edit-tool="draw" title="配置（1）">✎</button><button class="edit-tool" data-edit-tool="select" title="単選択（2）">↖</button><button class="edit-tool" data-edit-tool="range" title="範囲選択（3）">▧</button><button class="edit-tool" data-edit-tool="eraser" title="消しゴム（4）">◇</button></div><span class="edit-tool-name" id="editToolName">配置</span></div>
+        <div class="group"><span class="tool-label">拡大</span><button class="icon" id="zoomOut">−</button><span class="tool" id="zoomText">320px/小節</span><button class="icon" id="zoomIn">＋</button></div>
+        <div class="group"><span class="tool-label">入力ガイド</span><select class="tool" id="guideSelect"><option>4</option><option selected>8</option><option>12</option><option>16</option><option>24</option><option>32</option><option>48</option><option>64</option><option>96</option><option>128</option><option>192</option></select><span class="tool-label">分刻み</span></div>
+        <div class="group"><span class="tool-label">横グリッド</span><span class="tool">12列固定</span></div>
+        <div class="group"><span class="tool-label">移動</span><input class="tool" id="jumpMeasureInput" type="number" min="1" value="1" style="width:62px"><button class="icon" id="jumpBtn">↕</button></div>
+        <div class="spacer"></div><button class="btn" id="undoBtn">元に戻す</button><button class="btn" id="redoBtn">やり直す</button>
+      </div>
 
-          <div class="section capture-only">
-            <div class="section-title">外部再生との同期</div>
-            <div class="sync-card">
-              <div class="sync-status"><span class="dot" id="syncDot"></span><span id="syncText">待機中 — ホロドリ側で再生</span></div>
-              <button class="large-button" id="syncButton">同期入力を開始</button>
-            </div>
-          </div>
+      <div class="stage" id="stage">
+        <div class="canvas-pad"><div class="score-wrap" id="scoreWrap"><canvas id="gridCanvas"></canvas><div class="notes-layer" id="notesLayer"></div><div class="selection-box" id="selectionBox" hidden></div><div class="playhead" id="playhead"></div></div></div>
+      </div>
 
-          <div class="section capture-only">
-            <div class="section-title">入力キー</div>
-            <div class="key-list">
-              <div class="key-item"><kbd>Space</kbd><span>通常ノーツを仮置き</span></div>
-              <div class="key-item"><kbd>L</kbd><span>ロング開始／終了</span></div>
-              <div class="key-item"><kbd>F</kbd><span>フリックを仮置き</span></div>
-              <div class="key-item"><kbd>Enter</kbd><span>小節頭の同期点</span></div>
-              <div class="key-item"><kbd>Backspace</kbd><span>直前の入力を削除</span></div>
-            </div>
-          </div>
+      <div class="bottom">
+        <div class="transport"><button id="toStartBtn">■◀</button><button class="main" id="playBtn">▶</button><button id="toCurrentBtn">◎</button></div>
+        <div class="timeline"><div class="timeline-bars" id="timelineBars"></div><div class="timeline-window" id="timelineWindow"></div></div>
+        <div class="time"><strong id="timeText">00:00.000</strong><span id="musicalText">#1・0/8</span></div>
+      </div>
+    </section>
 
-          <div class="section capture-only">
-            <div class="section-title">直近の入力 <small>見本</small></div>
-            <div class="event-list" id="eventList">
-              <div class="event-item"><strong>36.428</strong><span>#18・8/16 通常</span><span class="delta">+7ms</span></div>
-              <div class="event-item"><strong>36.936</strong><span>#18・10/16 ロング始</span><span class="delta">−11ms</span></div>
-              <div class="event-item"><strong>38.462</strong><span>#19・2/16 ロング終</span><span class="delta">+16ms</span></div>
-            </div>
-          </div>
+    <aside class="panel side">
+      <div class="scroll">
+        <section class="section"><div class="section-title">配置するノーツ</div><div class="palette"><button class="active" data-type="tap"><div class="swatch" style="background:var(--cyan)"></div><strong>通常</strong><small>青</small></button><button data-type="critical"><div class="swatch" style="background:var(--yellow)"></div><strong>強調</strong><small>黄</small></button><button data-type="flick"><div class="swatch" style="background:var(--pink)"></div><strong>フリック</strong><small>桃</small></button><button data-type="long"><div class="swatch" style="background:var(--green)"></div><strong>ロング</strong><small>始点→終点</small></button></div></section>
 
-          <div class="section edit-only" hidden>
-            <div class="section-title">編集操作</div>
-            <div class="key-list">
-              <div class="key-item"><kbd>Click</kbd><span>選択中の種類を配置</span></div>
-              <div class="key-item"><kbd>Drag</kbd><span>位置と幅を調整</span></div>
-              <div class="key-item"><kbd>Delete</kbd><span>選択ノーツを削除</span></div>
-              <div class="key-item"><kbd>Ctrl+Z</kbd><span>元に戻す</span></div>
-            </div>
-          </div>
+        <section class="section"><div class="section-title">選択ノーツ <small id="selectedIdText">未選択</small></div><div class="selection-summary" id="selectionSummary">単選択または範囲選択でノーツを選択できます。</div><div class="props">
+          <div class="prop"><span>種類</span><select id="propType"><option value="tap">通常</option><option value="critical">強調</option><option value="flick">フリック</option><option value="long">ロング</option></select></div>
+          <div class="prop"><span>小節</span><input id="propMeasure" type="number" min="1"></div>
+          <div class="prop"><span>ガイド位置</span><input id="propStep" type="number" min="0"></div>
+          <div class="prop"><span>左端列</span><input id="propLane" type="number" min="0" max="11"></div>
+          <div class="prop"><span>横幅（列）</span><input id="propWidth" type="number" min="1" max="12"></div>
+          <div class="prop"><span>生タイミング</span><input id="propRaw" readonly></div>
+        </div><div class="row-buttons"><button class="btn" id="duplicateBtn">複製</button><button class="btn danger" id="deleteBtn">削除</button></div></section>
 
-          <div class="section transfer-only" hidden>
-            <div class="section-title">転記中の小節</div>
-            <div class="field-row">
-              <div class="field"><label>現在</label><strong>#18</strong></div>
-              <div class="field"><label>進捗</label><strong>27%</strong></div>
-            </div>
-          </div>
+        <section class="section long-props" hidden><div class="section-title">ロング終点</div><div class="props"><div class="prop"><span>小節</span><input id="endMeasure" type="number" min="1"></div><div class="prop"><span>ガイド位置</span><input id="endStep" type="number" min="0"></div><div class="prop"><span>左端列</span><input id="endLane" type="number" min="0" max="11"></div><div class="prop"><span>横幅（列）</span><input id="endWidth" type="number" min="1" max="12"></div></div></section>
 
-          <div class="hint-box">
-            この版は画面構成の確認用です。音源読込、正確な時刻記録、保存、ホロドリへの自動入力はまだ行いません。
-          </div>
-        </div>
-      </aside>
+        <section class="section transfer-only" hidden><div class="section-title">転記チェック <small id="transferTitle">#1</small></div><div class="transfer-list" id="transferList"></div></section>
 
-      <section class="panel editor-panel">
-        <div class="editor-toolbar">
-          <div class="tool-group">
-            <span class="tool-label">表示</span>
-            <button class="icon-button" title="縮小">−</button>
-            <span class="tool-value">100%</span>
-            <button class="icon-button" title="拡大">＋</button>
-          </div>
-          <div class="tool-group">
-            <span class="tool-label">ガイド</span>
-            <select class="tool-value" id="snapSelect" aria-label="入力ガイド">
-              <option value="4">4分刻み</option>
-              <option value="8" selected>8分刻み</option>
-              <option value="12">12分刻み</option>
-              <option value="16">16分刻み</option>
-              <option value="24">24分刻み</option>
-              <option value="32">32分刻み</option>
-              <option value="48">48分刻み</option>
-              <option value="64">64分刻み</option>
-              <option value="96">96分刻み</option>
-              <option value="128">128分刻み</option>
-              <option value="192">192分刻み</option>
-            </select>
-          </div>
-          <div class="tool-group">
-            <span class="tool-label">スナップ</span>
-            <button class="top-action primary" style="height:34px" id="snapToggle">ON</button>
-          </div>
-          <div class="tool-group">
-            <span class="tool-label">表示範囲</span>
-            <span class="tool-value">#1–#2</span>
-          </div>
-          <div class="top-spacer"></div>
-          <span style="color:var(--muted);font-size:11px">クリックして見本ノーツを配置できます</span>
-        </div>
+        <section class="section"><div class="hint">ロングノーツのカーブは記録しません。始点と終点だけを同じロングとして結び、曲線はホロドリ側で調整します。</div></section>
+      </div>
+    </aside>
+  </main>
 
-        <div class="editor-stage">
-          <div class="canvas-wrap">
-            <div class="score-shell" id="scoreShell">
-              <div class="score-grid" id="scoreGrid"></div>
-              <div class="measure-line top"></div>
-              <div class="measure-line middle"></div>
-              <div class="measure-line bottom"></div>
-              <div class="measure-tag m3">#3</div>
-              <div class="measure-tag m2">#2</div>
-              <div class="measure-tag m1">#1</div>
-              <div class="empty-hint">下から上へ時間が進行・横位置は連続値</div>
-              <div class="playhead"></div>
-
-              <div class="note tap" style="left:11%;width:17%;bottom:13%"></div>
-              <div class="note tap" style="left:55%;width:12%;bottom:19%"></div>
-              <div class="note critical" style="left:31%;width:27%;bottom:31%"></div>
-              <div class="note flick" style="left:66%;width:16%;bottom:43%"></div>
-              <div class="note long" style="left:17%;width:18%;bottom:58%;--link-height:176px"></div>
-              <div class="note long end" style="left:67%;width:20%;bottom:78%"></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="overview">
-          <div class="transport">
-            <button>◀◀</button>
-            <button class="main" id="playButton">▶</button>
-            <button>▶▶</button>
-          </div>
-          <div class="minimap-wrap">
-            <div class="minimap">
-              <span class="mini-bar" style="height:32%"></span><span class="mini-bar" style="height:56%"></span>
-              <span class="mini-bar" style="height:44%"></span><span class="mini-bar hot" style="height:78%"></span>
-              <span class="mini-bar" style="height:66%"></span><span class="mini-bar" style="height:42%"></span>
-              <span class="mini-bar hot" style="height:88%"></span><span class="mini-bar" style="height:51%"></span>
-              <span class="mini-bar" style="height:73%"></span><span class="mini-bar hot" style="height:62%"></span>
-              <span class="mini-bar" style="height:37%"></span><span class="mini-bar" style="height:82%"></span>
-              <span class="mini-bar" style="height:49%"></span><span class="mini-bar hot" style="height:70%"></span>
-              <span class="mini-bar" style="height:55%"></span><span class="mini-bar" style="height:26%"></span>
-            </div>
-            <div class="mini-window"></div>
-          </div>
-          <div class="time-info"><strong>00:36.428</strong><span>#18・2拍目・8分位置</span></div>
-        </div>
-      </section>
-
-      <aside class="panel right-panel">
-        <div class="right-scroll">
-          <div class="section">
-            <div class="section-title">ノーツ種類</div>
-            <div class="palette">
-              <button class="palette-button active" data-note="tap">
-                <div class="palette-swatch" style="background:var(--cyan)"></div><strong>通常</strong><small>タイミングのみ</small>
-              </button>
-              <button class="palette-button" data-note="critical">
-                <div class="palette-swatch" style="background:var(--yellow)"></div><strong>強調</strong><small>黄色ノーツ</small>
-              </button>
-              <button class="palette-button" data-note="flick">
-                <div class="palette-swatch" style="background:var(--pink)"></div><strong>フリック</strong><small>方向は後で指定</small>
-              </button>
-              <button class="palette-button" data-note="long">
-                <div class="palette-swatch" style="background:var(--lime)"></div><strong>ロング</strong><small>始点・終点のみ</small>
-              </button>
-            </div>
-          </div>
-
-          <div class="section">
-            <div class="section-title">選択ノーツ</div>
-            <div class="property-list">
-              <div class="property-row"><span>種類</span><select><option>通常</option><option>強調</option><option>フリック</option><option>ロング始点</option><option>ロング終点</option></select></div>
-              <div class="property-row"><span>小節</span><input value="#18" /></div>
-              <div class="property-row"><span>ガイド位置</span><input value="8 / 16" /></div>
-              <div class="property-row"><span>横位置</span><input value="42%" /></div>
-              <div class="property-row"><span>横幅</span><input value="18%" /></div>
-              <div class="property-row"><span>生タイミング</span><input value="36.428 s" /></div>
-              <div class="property-row"><span>スナップ差</span><input value="+7 ms" /></div>
-            </div>
-          </div>
-
-          <div class="section transfer-section">
-            <div class="section-title">転記チェック <small>#18</small></div>
-            <div class="transfer-card">
-              <label class="transfer-row"><input type="checkbox" /><span>通常　8/16　位置42%　幅18%</span></label>
-              <label class="transfer-row"><input type="checkbox" /><span>ロング開始　10/16　位置22%</span></label>
-              <label class="transfer-row"><input type="checkbox" /><span>ロング終了　#19・2/16　位置70%</span></label>
-              <label class="transfer-row"><input type="checkbox" /><span>フリック　14/16　位置66%</span></label>
-            </div>
-          </div>
-
-          <div class="hint-box">
-            ロングノーツの途中カーブは保持しません。始点・終点を直線または点線で結び、実際の形状はホロドリ側で調整します。
-          </div>
-        </div>
-      </aside>
-    </main>
-
-    <footer class="statusbar">
-      <span class="good">● ローカル専用設計</span>
-      <span>外部送信なし</span>
-      <span>ゲーム自動操作なし</span>
-      <span>音源抽出なし</span>
-      <span class="spacer"></span>
-      <span>Layout prototype / no persistence</span>
-    </footer>
-  </div>
-
-  <div class="toast" id="toast"></div>
-
-  <script>
-    const tabs = document.querySelectorAll('.mode-tab');
-    const captureOnly = document.querySelectorAll('.capture-only');
-    const editOnly = document.querySelectorAll('.edit-only');
-    const transferOnly = document.querySelectorAll('.transfer-only');
-    const transferSection = document.querySelector('.transfer-section');
-    const toast = document.getElementById('toast');
-    let toastTimer;
-    let activeNote = 'tap';
-    let snapEnabled = true;
-
-    function showToast(message) {
-      toast.textContent = message;
-      toast.classList.add('show');
-      clearTimeout(toastTimer);
-      toastTimer = setTimeout(() => toast.classList.remove('show'), 1800);
-    }
-
-    tabs.forEach(tab => tab.addEventListener('click', () => {
-      tabs.forEach(x => x.classList.remove('active'));
-      tab.classList.add('active');
-      const mode = tab.dataset.mode;
-      captureOnly.forEach(x => x.hidden = mode !== 'capture');
-      editOnly.forEach(x => x.hidden = mode !== 'edit');
-      transferOnly.forEach(x => x.hidden = mode !== 'transfer');
-      transferSection.style.display = mode === 'transfer' ? 'block' : 'none';
-      showToast(mode === 'capture' ? 'タイミング入力レイアウト' : mode === 'edit' ? '譜面編集レイアウト' : '転記レイアウト');
-    }));
-
-    document.querySelectorAll('.palette-button').forEach(button => {
-      button.addEventListener('click', () => {
-        document.querySelectorAll('.palette-button').forEach(x => x.classList.remove('active'));
-        button.classList.add('active');
-        activeNote = button.dataset.note;
-        showToast(`配置種類：${button.querySelector('strong').textContent}`);
-      });
-    });
-
-    const snapSelect = document.getElementById('snapSelect');
-    const scoreGrid = document.getElementById('scoreGrid');
-    function updateGrid() {
-      const value = Number(snapSelect.value);
-      scoreGrid.style.setProperty('--division-lines', String(value * 2));
-      showToast(`${value}分刻みの表示イメージ`);
-    }
-    snapSelect.addEventListener('change', updateGrid);
-    updateGrid();
-
-    document.getElementById('snapToggle').addEventListener('click', event => {
-      snapEnabled = !snapEnabled;
-      event.target.textContent = snapEnabled ? 'ON' : 'OFF';
-      event.target.classList.toggle('primary', snapEnabled);
-      showToast(`スナップ ${snapEnabled ? 'ON' : 'OFF'}`);
-    });
-
-    let syncing = false;
-    document.getElementById('syncButton').addEventListener('click', event => {
-      syncing = !syncing;
-      event.target.textContent = syncing ? '同期入力を終了' : '同期入力を開始';
-      event.target.classList.toggle('live', syncing);
-      document.getElementById('syncDot').classList.toggle('live', syncing);
-      document.getElementById('syncText').textContent = syncing ? '入力受付中 — 外部の音を聞いてキー入力' : '待機中 — ホロドリ側で再生';
-    });
-
-    const shell = document.getElementById('scoreShell');
-    shell.addEventListener('click', event => {
-      if (event.target.classList.contains('note')) {
-        document.querySelectorAll('.note').forEach(x => x.classList.remove('selected'));
-        event.target.classList.add('selected');
-        return;
-      }
-      if (event.target !== shell && event.target !== scoreGrid) return;
-      const rect = shell.getBoundingClientRect();
-      const x = event.clientX - rect.left;
-      const y = event.clientY - rect.top;
-      const note = document.createElement('div');
-      note.className = `note ${activeNote} selected`;
-      note.style.left = `${Math.max(1, Math.min(86, (x / rect.width) * 100 - 7))}%`;
-      note.style.bottom = `${Math.max(1, Math.min(97, 100 - (y / rect.height) * 100))}%`;
-      note.style.width = activeNote === 'long' ? '18%' : '14%';
-      if (activeNote === 'long') note.classList.add('end');
-      document.querySelectorAll('.note').forEach(x => x.classList.remove('selected'));
-      shell.appendChild(note);
-      showToast('見本ノーツを配置しました（保存されません）');
-    });
-
-    document.getElementById('playButton').addEventListener('click', event => {
-      const playing = event.target.textContent === '❚❚';
-      event.target.textContent = playing ? '▶' : '❚❚';
-      showToast(playing ? '停止イメージ' : '再生イメージ（音声なし）');
-    });
-
-    document.getElementById('saveBtn').addEventListener('click', () => showToast('確認版のため保存処理は未実装です'));
-    document.getElementById('undoBtn').addEventListener('click', () => showToast('確認版のため履歴処理は未実装です'));
-
-    transferSection.style.display = 'none';
-  </script>
+  <footer class="statusbar"><span class="ok">● ローカル動作</span><span>ゲーム自動操作なし</span><span>音源・画像の外部送信なし</span><span>配置・単選択・範囲選択・消しゴム</span><span>カーソルは実時間で連続移動</span><span>ノーツ通過音</span><span class="spacer"></span><span id="saveStatus">自動保存待機</span></footer>
+</div>
+<div class="toast" id="toast"></div>
+<div class="modal" id="welcomeModal"><div class="modal-card"><h2>完成前確認版</h2><p>今回の版では、<strong>配置・単選択・範囲選択・消しゴム</strong>を追加しました。範囲選択した複数ノーツは一括移動・複製・削除でき、消しゴムはクリックまたはなぞるだけで即座に削除します。</p><p>録音・外部同期中のカーソルラインはガイドにスナップせず、実時間に沿って連続的に移動します。ノーツの配置だけが選択中の時間ガイドと横12列へ吸着します。</p><p>再生時にはカーソルがノーツを通過するたびに確認音が鳴ります。通常・強調・フリック・ロング始点／終点で音色を分け、音量とON／OFFを左側で調整できます。</p><div class="modal-actions"><button class="btn primary" id="closeWelcome">確認する</button></div></div></div>
+  <script src="app.js"></script>
 </body>
 </html>
