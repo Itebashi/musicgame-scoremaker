@@ -1,0 +1,925 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Musicgame Scoremaker — Layout Prototype v0.1</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0b1020;
+      --panel: #121a2d;
+      --panel-2: #172238;
+      --panel-3: #0f1728;
+      --line: #2a3854;
+      --line-strong: #415373;
+      --text: #f3f7ff;
+      --muted: #91a0b8;
+      --cyan: #36d6ff;
+      --cyan-2: #0e9fc7;
+      --lime: #9af36a;
+      --yellow: #ffd75a;
+      --pink: #ff6fcf;
+      --danger: #ff6b78;
+      --shadow: 0 18px 48px rgba(0, 0, 0, .28);
+      --radius: 16px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      overflow: hidden;
+      font-family: "Segoe UI", "Yu Gothic UI", "Meiryo", sans-serif;
+      background:
+        radial-gradient(circle at 22% -10%, rgba(54,214,255,.11), transparent 34%),
+        radial-gradient(circle at 90% 15%, rgba(255,111,207,.08), transparent 30%),
+        var(--bg);
+      color: var(--text);
+    }
+
+    button, select, input { font: inherit; }
+    button { color: inherit; }
+
+    .app {
+      height: 100%;
+      display: grid;
+      grid-template-rows: 64px minmax(0, 1fr) 42px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      padding: 0 20px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(11, 16, 32, .88);
+      backdrop-filter: blur(18px);
+      z-index: 20;
+    }
+
+    .brand {
+      min-width: 278px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-mark {
+      width: 34px;
+      height: 34px;
+      border-radius: 11px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(145deg, rgba(54,214,255,.25), rgba(54,214,255,.06));
+      border: 1px solid rgba(54,214,255,.42);
+      color: var(--cyan);
+      box-shadow: 0 0 24px rgba(54,214,255,.13);
+      font-weight: 900;
+    }
+
+    .brand-title { font-weight: 800; letter-spacing: .01em; }
+    .brand-sub { margin-top: 2px; color: var(--muted); font-size: 11px; }
+
+    .project-field {
+      min-width: 220px;
+      height: 38px;
+      padding: 0 13px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      background: var(--panel-3);
+    }
+    .project-field span:first-child { color: var(--muted); font-size: 12px; }
+    .project-field strong { font-size: 13px; }
+
+    .top-spacer { flex: 1; }
+
+    .review-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,215,90,.35);
+      background: rgba(255,215,90,.08);
+      color: #ffe48c;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .top-action {
+      height: 36px;
+      padding: 0 14px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--panel-2);
+      cursor: pointer;
+    }
+    .top-action:hover { border-color: var(--line-strong); }
+    .top-action.primary {
+      background: linear-gradient(180deg, #1db7dc, #1186aa);
+      border-color: #3bdcff;
+      font-weight: 700;
+    }
+
+    .workspace {
+      min-height: 0;
+      display: grid;
+      grid-template-columns: 288px minmax(620px, 1fr) 300px;
+      gap: 12px;
+      padding: 12px;
+    }
+
+    .panel {
+      min-height: 0;
+      background: linear-gradient(180deg, rgba(23,34,56,.96), rgba(17,26,45,.98));
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .left-panel, .right-panel { display: flex; flex-direction: column; }
+
+    .mode-tabs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      padding: 10px;
+      gap: 6px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .mode-tab {
+      height: 40px;
+      border: 1px solid transparent;
+      border-radius: 10px;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 12px;
+    }
+    .mode-tab:hover { background: rgba(255,255,255,.03); }
+    .mode-tab.active {
+      color: var(--text);
+      border-color: rgba(54,214,255,.42);
+      background: rgba(54,214,255,.09);
+    }
+
+    .left-scroll, .right-scroll {
+      min-height: 0;
+      overflow: auto;
+      padding: 14px;
+    }
+
+    .section { margin-bottom: 18px; }
+    .section-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 9px;
+      color: #dce7f8;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .04em;
+    }
+    .section-title small { color: var(--muted); font-weight: 500; }
+
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .field {
+      padding: 8px 10px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--panel-3);
+    }
+    .field label { display: block; color: var(--muted); font-size: 10px; margin-bottom: 4px; }
+    .field strong { font-size: 14px; }
+
+    .sync-card {
+      padding: 12px;
+      border: 1px solid rgba(54,214,255,.24);
+      border-radius: 12px;
+      background: rgba(54,214,255,.045);
+    }
+
+    .sync-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: #66728a; }
+    .dot.live { background: var(--lime); box-shadow: 0 0 12px rgba(154,243,106,.7); }
+
+    .large-button {
+      width: 100%;
+      min-height: 48px;
+      border: 1px solid var(--line-strong);
+      border-radius: 12px;
+      background: linear-gradient(180deg, #253653, #1b2942);
+      cursor: pointer;
+      font-weight: 800;
+    }
+    .large-button:hover { border-color: var(--cyan); }
+    .large-button.live {
+      border-color: rgba(255,107,120,.8);
+      background: rgba(255,107,120,.12);
+      color: #ffb2ba;
+    }
+
+    .key-list { display: grid; gap: 7px; }
+    .key-item {
+      display: grid;
+      grid-template-columns: 66px 1fr;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    kbd {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      height: 28px;
+      border: 1px solid var(--line-strong);
+      border-bottom-width: 3px;
+      border-radius: 7px;
+      background: #202e49;
+      color: var(--text);
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .event-list { display: grid; gap: 6px; }
+    .event-item {
+      display: grid;
+      grid-template-columns: 58px 1fr auto;
+      gap: 8px;
+      align-items: center;
+      padding: 8px;
+      border-radius: 8px;
+      background: rgba(255,255,255,.025);
+      color: var(--muted);
+      font-size: 11px;
+    }
+    .event-item strong { color: var(--text); font-variant-numeric: tabular-nums; }
+    .event-item .delta { color: #aac0dd; }
+
+    .editor-panel {
+      display: grid;
+      grid-template-rows: 56px minmax(0, 1fr) 112px;
+    }
+
+    .editor-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 12px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .tool-group {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding-right: 10px;
+      border-right: 1px solid var(--line);
+    }
+    .tool-group:last-child { border-right: 0; }
+    .tool-label { color: var(--muted); font-size: 10px; }
+    .tool-value {
+      height: 34px;
+      min-width: 70px;
+      padding: 0 9px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: var(--panel-3);
+      font-weight: 700;
+      font-size: 12px;
+    }
+    select.tool-value { color: var(--text); }
+
+    .icon-button {
+      width: 34px;
+      height: 34px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: var(--panel-3);
+      cursor: pointer;
+    }
+    .icon-button:hover { border-color: var(--line-strong); }
+
+    .editor-stage {
+      min-height: 0;
+      position: relative;
+      overflow: auto;
+      background:
+        linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px) 0 0 / 32px 32px,
+        #0d1424;
+    }
+
+    .canvas-wrap {
+      min-height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: stretch;
+      padding: 28px 48px;
+    }
+
+    .score-shell {
+      position: relative;
+      width: min(780px, 100%);
+      min-height: 920px;
+      border: 1px solid #495979;
+      border-radius: 6px;
+      background: #111a2f;
+      box-shadow: 0 24px 60px rgba(0,0,0,.34);
+      overflow: hidden;
+      user-select: none;
+    }
+
+    .score-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(to right, rgba(142,157,188,.42) 1px, transparent 1px),
+        linear-gradient(to top, rgba(142,157,188,.28) 1px, transparent 1px);
+      background-size: calc(100% / 12) 100%, 100% calc(100% / var(--division-lines, 32));
+    }
+
+    .measure-line {
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: rgba(240,246,255,.94);
+      box-shadow: 0 0 12px rgba(255,255,255,.2);
+    }
+    .measure-line.middle { bottom: 50%; }
+    .measure-line.top { top: 0; }
+    .measure-line.bottom { bottom: 0; }
+
+    .measure-tag {
+      position: absolute;
+      right: 10px;
+      transform: translateY(-50%);
+      padding: 3px 7px;
+      border-radius: 7px;
+      background: rgba(11,16,32,.78);
+      color: #eaf2ff;
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .measure-tag.m1 { bottom: calc(0% - 8px); transform: none; }
+    .measure-tag.m2 { bottom: calc(50% - 8px); transform: none; }
+    .measure-tag.m3 { top: 8px; transform: none; }
+
+    .playhead {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 27.5%;
+      height: 2px;
+      background: var(--lime);
+      box-shadow: 0 0 12px rgba(154,243,106,.5);
+      z-index: 6;
+    }
+    .playhead::after {
+      content: "▶";
+      position: absolute;
+      right: -28px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--lime);
+      font-size: 20px;
+    }
+
+    .note {
+      position: absolute;
+      height: 16px;
+      border-radius: 5px;
+      z-index: 5;
+      cursor: pointer;
+      border: 1px solid rgba(255,255,255,.35);
+      box-shadow: 0 4px 12px rgba(0,0,0,.26);
+    }
+    .note.tap { background: linear-gradient(180deg, #59e5ff, #17abd2); }
+    .note.critical { background: linear-gradient(180deg, #ffe979, #e5b92d); }
+    .note.flick { background: linear-gradient(180deg, #ff95df, #e94ebd); }
+    .note.long { background: linear-gradient(180deg, #b6ff8d, #5fce5a); }
+    .note.selected { outline: 3px solid white; outline-offset: 3px; }
+    .note.long::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 100%;
+      height: var(--link-height, 120px);
+      width: 2px;
+      border-left: 2px dashed rgba(154,243,106,.8);
+    }
+    .note.long.end::after { display: none; }
+
+    .empty-hint {
+      position: absolute;
+      left: 18px;
+      top: 18px;
+      padding: 7px 10px;
+      border-radius: 8px;
+      background: rgba(11,16,32,.72);
+      color: var(--muted);
+      font-size: 11px;
+      z-index: 4;
+    }
+
+    .overview {
+      border-top: 1px solid var(--line);
+      padding: 10px 12px;
+      display: grid;
+      grid-template-columns: 100px minmax(0, 1fr) 180px;
+      gap: 12px;
+      align-items: center;
+      background: #10182a;
+    }
+
+    .transport { display: flex; gap: 6px; }
+    .transport button {
+      width: 36px;
+      height: 36px;
+      border-radius: 9px;
+      border: 1px solid var(--line);
+      background: var(--panel-2);
+      cursor: pointer;
+    }
+    .transport button.main { width: 44px; border-color: rgba(54,214,255,.42); color: var(--cyan); }
+
+    .minimap {
+      height: 66px;
+      display: grid;
+      grid-template-columns: repeat(16, 1fr);
+      gap: 4px;
+      align-items: end;
+      padding: 6px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #0d1424;
+    }
+    .mini-bar {
+      min-height: 12px;
+      border-radius: 3px;
+      background: rgba(54,214,255,.38);
+    }
+    .mini-bar.hot { background: rgba(255,111,207,.62); }
+    .mini-window {
+      position: absolute;
+      inset: 5px auto 5px 24%;
+      width: 18%;
+      border: 2px solid rgba(255,255,255,.75);
+      border-radius: 7px;
+      pointer-events: none;
+    }
+    .minimap-wrap { position: relative; }
+
+    .time-info { text-align: right; }
+    .time-info strong { display: block; font-size: 15px; font-variant-numeric: tabular-nums; }
+    .time-info span { color: var(--muted); font-size: 11px; }
+
+    .palette { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .palette-button {
+      min-height: 56px;
+      padding: 9px;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      background: var(--panel-3);
+      cursor: pointer;
+      text-align: left;
+    }
+    .palette-button:hover { border-color: var(--line-strong); }
+    .palette-button.active { outline: 2px solid rgba(255,255,255,.72); outline-offset: -3px; }
+    .palette-swatch { width: 42px; height: 9px; border-radius: 4px; margin-bottom: 8px; }
+    .palette-button strong { font-size: 12px; }
+    .palette-button small { display: block; margin-top: 3px; color: var(--muted); font-size: 10px; }
+
+    .property-list { display: grid; gap: 8px; }
+    .property-row {
+      display: grid;
+      grid-template-columns: 88px 1fr;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+    .property-row input, .property-row select {
+      width: 100%;
+      height: 34px;
+      padding: 0 8px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel-3);
+      color: var(--text);
+    }
+
+    .transfer-card {
+      padding: 12px;
+      border-radius: 12px;
+      background: #0e1728;
+      border: 1px solid var(--line);
+    }
+    .transfer-row {
+      display: grid;
+      grid-template-columns: 20px 1fr;
+      gap: 8px;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(42,56,84,.7);
+      color: #c9d5e8;
+      font-size: 11px;
+    }
+    .transfer-row:last-child { border-bottom: 0; }
+    .transfer-row input { accent-color: var(--cyan); }
+
+    .hint-box {
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px dashed var(--line-strong);
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.65;
+    }
+
+    .statusbar {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 0 16px;
+      border-top: 1px solid var(--line);
+      background: #090e1a;
+      color: var(--muted);
+      font-size: 11px;
+    }
+    .statusbar .good { color: #b8f29d; }
+    .statusbar .spacer { flex: 1; }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 58px;
+      transform: translate(-50%, 16px);
+      padding: 10px 14px;
+      border: 1px solid var(--line-strong);
+      border-radius: 10px;
+      background: #121a2d;
+      box-shadow: var(--shadow);
+      opacity: 0;
+      pointer-events: none;
+      transition: .18s ease;
+      z-index: 50;
+      font-size: 12px;
+    }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+    @media (max-width: 1280px) {
+      .workspace { grid-template-columns: 250px minmax(560px, 1fr) 260px; }
+      .brand { min-width: 235px; }
+      .project-field { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">♪</div>
+        <div>
+          <div class="brand-title">Musicgame Scoremaker</div>
+          <div class="brand-sub">外部再生に合わせて作る譜面下書きツール</div>
+        </div>
+      </div>
+      <div class="project-field"><span>プロジェクト</span><strong>Overdose / EXPERT案</strong></div>
+      <div class="top-spacer"></div>
+      <div class="review-badge">● レイアウト確認版 v0.1</div>
+      <button class="top-action" id="undoBtn">元に戻す</button>
+      <button class="top-action">プロジェクトを開く</button>
+      <button class="top-action primary" id="saveBtn">保存イメージ</button>
+    </header>
+
+    <main class="workspace">
+      <aside class="panel left-panel">
+        <div class="mode-tabs">
+          <button class="mode-tab active" data-mode="capture">タイミング</button>
+          <button class="mode-tab" data-mode="edit">譜面編集</button>
+          <button class="mode-tab" data-mode="transfer">転記</button>
+        </div>
+        <div class="left-scroll">
+          <div class="section">
+            <div class="section-title">楽曲設定 <small>手入力</small></div>
+            <div class="field-row">
+              <div class="field"><label>BPM</label><strong>118.00</strong></div>
+              <div class="field"><label>拍子</label><strong>4 / 4</strong></div>
+              <div class="field"><label>総小節</label><strong>62</strong></div>
+              <div class="field"><label>開始オフセット</label><strong>0.000 s</strong></div>
+            </div>
+          </div>
+
+          <div class="section capture-only">
+            <div class="section-title">外部再生との同期</div>
+            <div class="sync-card">
+              <div class="sync-status"><span class="dot" id="syncDot"></span><span id="syncText">待機中 — ホロドリ側で再生</span></div>
+              <button class="large-button" id="syncButton">同期入力を開始</button>
+            </div>
+          </div>
+
+          <div class="section capture-only">
+            <div class="section-title">入力キー</div>
+            <div class="key-list">
+              <div class="key-item"><kbd>Space</kbd><span>通常ノーツを仮置き</span></div>
+              <div class="key-item"><kbd>L</kbd><span>ロング開始／終了</span></div>
+              <div class="key-item"><kbd>F</kbd><span>フリックを仮置き</span></div>
+              <div class="key-item"><kbd>Enter</kbd><span>小節頭の同期点</span></div>
+              <div class="key-item"><kbd>Backspace</kbd><span>直前の入力を削除</span></div>
+            </div>
+          </div>
+
+          <div class="section capture-only">
+            <div class="section-title">直近の入力 <small>見本</small></div>
+            <div class="event-list" id="eventList">
+              <div class="event-item"><strong>36.428</strong><span>#18・8/16 通常</span><span class="delta">+7ms</span></div>
+              <div class="event-item"><strong>36.936</strong><span>#18・10/16 ロング始</span><span class="delta">−11ms</span></div>
+              <div class="event-item"><strong>38.462</strong><span>#19・2/16 ロング終</span><span class="delta">+16ms</span></div>
+            </div>
+          </div>
+
+          <div class="section edit-only" hidden>
+            <div class="section-title">編集操作</div>
+            <div class="key-list">
+              <div class="key-item"><kbd>Click</kbd><span>選択中の種類を配置</span></div>
+              <div class="key-item"><kbd>Drag</kbd><span>位置と幅を調整</span></div>
+              <div class="key-item"><kbd>Delete</kbd><span>選択ノーツを削除</span></div>
+              <div class="key-item"><kbd>Ctrl+Z</kbd><span>元に戻す</span></div>
+            </div>
+          </div>
+
+          <div class="section transfer-only" hidden>
+            <div class="section-title">転記中の小節</div>
+            <div class="field-row">
+              <div class="field"><label>現在</label><strong>#18</strong></div>
+              <div class="field"><label>進捗</label><strong>27%</strong></div>
+            </div>
+          </div>
+
+          <div class="hint-box">
+            この版は画面構成の確認用です。音源読込、正確な時刻記録、保存、ホロドリへの自動入力はまだ行いません。
+          </div>
+        </div>
+      </aside>
+
+      <section class="panel editor-panel">
+        <div class="editor-toolbar">
+          <div class="tool-group">
+            <span class="tool-label">表示</span>
+            <button class="icon-button" title="縮小">−</button>
+            <span class="tool-value">100%</span>
+            <button class="icon-button" title="拡大">＋</button>
+          </div>
+          <div class="tool-group">
+            <span class="tool-label">ガイド</span>
+            <select class="tool-value" id="snapSelect" aria-label="入力ガイド">
+              <option value="4">4分刻み</option>
+              <option value="8" selected>8分刻み</option>
+              <option value="12">12分刻み</option>
+              <option value="16">16分刻み</option>
+              <option value="24">24分刻み</option>
+              <option value="32">32分刻み</option>
+              <option value="48">48分刻み</option>
+              <option value="64">64分刻み</option>
+              <option value="96">96分刻み</option>
+              <option value="128">128分刻み</option>
+              <option value="192">192分刻み</option>
+            </select>
+          </div>
+          <div class="tool-group">
+            <span class="tool-label">スナップ</span>
+            <button class="top-action primary" style="height:34px" id="snapToggle">ON</button>
+          </div>
+          <div class="tool-group">
+            <span class="tool-label">表示範囲</span>
+            <span class="tool-value">#1–#2</span>
+          </div>
+          <div class="top-spacer"></div>
+          <span style="color:var(--muted);font-size:11px">クリックして見本ノーツを配置できます</span>
+        </div>
+
+        <div class="editor-stage">
+          <div class="canvas-wrap">
+            <div class="score-shell" id="scoreShell">
+              <div class="score-grid" id="scoreGrid"></div>
+              <div class="measure-line top"></div>
+              <div class="measure-line middle"></div>
+              <div class="measure-line bottom"></div>
+              <div class="measure-tag m3">#3</div>
+              <div class="measure-tag m2">#2</div>
+              <div class="measure-tag m1">#1</div>
+              <div class="empty-hint">下から上へ時間が進行・横位置は連続値</div>
+              <div class="playhead"></div>
+
+              <div class="note tap" style="left:11%;width:17%;bottom:13%"></div>
+              <div class="note tap" style="left:55%;width:12%;bottom:19%"></div>
+              <div class="note critical" style="left:31%;width:27%;bottom:31%"></div>
+              <div class="note flick" style="left:66%;width:16%;bottom:43%"></div>
+              <div class="note long" style="left:17%;width:18%;bottom:58%;--link-height:176px"></div>
+              <div class="note long end" style="left:67%;width:20%;bottom:78%"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="overview">
+          <div class="transport">
+            <button>◀◀</button>
+            <button class="main" id="playButton">▶</button>
+            <button>▶▶</button>
+          </div>
+          <div class="minimap-wrap">
+            <div class="minimap">
+              <span class="mini-bar" style="height:32%"></span><span class="mini-bar" style="height:56%"></span>
+              <span class="mini-bar" style="height:44%"></span><span class="mini-bar hot" style="height:78%"></span>
+              <span class="mini-bar" style="height:66%"></span><span class="mini-bar" style="height:42%"></span>
+              <span class="mini-bar hot" style="height:88%"></span><span class="mini-bar" style="height:51%"></span>
+              <span class="mini-bar" style="height:73%"></span><span class="mini-bar hot" style="height:62%"></span>
+              <span class="mini-bar" style="height:37%"></span><span class="mini-bar" style="height:82%"></span>
+              <span class="mini-bar" style="height:49%"></span><span class="mini-bar hot" style="height:70%"></span>
+              <span class="mini-bar" style="height:55%"></span><span class="mini-bar" style="height:26%"></span>
+            </div>
+            <div class="mini-window"></div>
+          </div>
+          <div class="time-info"><strong>00:36.428</strong><span>#18・2拍目・8分位置</span></div>
+        </div>
+      </section>
+
+      <aside class="panel right-panel">
+        <div class="right-scroll">
+          <div class="section">
+            <div class="section-title">ノーツ種類</div>
+            <div class="palette">
+              <button class="palette-button active" data-note="tap">
+                <div class="palette-swatch" style="background:var(--cyan)"></div><strong>通常</strong><small>タイミングのみ</small>
+              </button>
+              <button class="palette-button" data-note="critical">
+                <div class="palette-swatch" style="background:var(--yellow)"></div><strong>強調</strong><small>黄色ノーツ</small>
+              </button>
+              <button class="palette-button" data-note="flick">
+                <div class="palette-swatch" style="background:var(--pink)"></div><strong>フリック</strong><small>方向は後で指定</small>
+              </button>
+              <button class="palette-button" data-note="long">
+                <div class="palette-swatch" style="background:var(--lime)"></div><strong>ロング</strong><small>始点・終点のみ</small>
+              </button>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="section-title">選択ノーツ</div>
+            <div class="property-list">
+              <div class="property-row"><span>種類</span><select><option>通常</option><option>強調</option><option>フリック</option><option>ロング始点</option><option>ロング終点</option></select></div>
+              <div class="property-row"><span>小節</span><input value="#18" /></div>
+              <div class="property-row"><span>ガイド位置</span><input value="8 / 16" /></div>
+              <div class="property-row"><span>横位置</span><input value="42%" /></div>
+              <div class="property-row"><span>横幅</span><input value="18%" /></div>
+              <div class="property-row"><span>生タイミング</span><input value="36.428 s" /></div>
+              <div class="property-row"><span>スナップ差</span><input value="+7 ms" /></div>
+            </div>
+          </div>
+
+          <div class="section transfer-section">
+            <div class="section-title">転記チェック <small>#18</small></div>
+            <div class="transfer-card">
+              <label class="transfer-row"><input type="checkbox" /><span>通常　8/16　位置42%　幅18%</span></label>
+              <label class="transfer-row"><input type="checkbox" /><span>ロング開始　10/16　位置22%</span></label>
+              <label class="transfer-row"><input type="checkbox" /><span>ロング終了　#19・2/16　位置70%</span></label>
+              <label class="transfer-row"><input type="checkbox" /><span>フリック　14/16　位置66%</span></label>
+            </div>
+          </div>
+
+          <div class="hint-box">
+            ロングノーツの途中カーブは保持しません。始点・終点を直線または点線で結び、実際の形状はホロドリ側で調整します。
+          </div>
+        </div>
+      </aside>
+    </main>
+
+    <footer class="statusbar">
+      <span class="good">● ローカル専用設計</span>
+      <span>外部送信なし</span>
+      <span>ゲーム自動操作なし</span>
+      <span>音源抽出なし</span>
+      <span class="spacer"></span>
+      <span>Layout prototype / no persistence</span>
+    </footer>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const tabs = document.querySelectorAll('.mode-tab');
+    const captureOnly = document.querySelectorAll('.capture-only');
+    const editOnly = document.querySelectorAll('.edit-only');
+    const transferOnly = document.querySelectorAll('.transfer-only');
+    const transferSection = document.querySelector('.transfer-section');
+    const toast = document.getElementById('toast');
+    let toastTimer;
+    let activeNote = 'tap';
+    let snapEnabled = true;
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove('show'), 1800);
+    }
+
+    tabs.forEach(tab => tab.addEventListener('click', () => {
+      tabs.forEach(x => x.classList.remove('active'));
+      tab.classList.add('active');
+      const mode = tab.dataset.mode;
+      captureOnly.forEach(x => x.hidden = mode !== 'capture');
+      editOnly.forEach(x => x.hidden = mode !== 'edit');
+      transferOnly.forEach(x => x.hidden = mode !== 'transfer');
+      transferSection.style.display = mode === 'transfer' ? 'block' : 'none';
+      showToast(mode === 'capture' ? 'タイミング入力レイアウト' : mode === 'edit' ? '譜面編集レイアウト' : '転記レイアウト');
+    }));
+
+    document.querySelectorAll('.palette-button').forEach(button => {
+      button.addEventListener('click', () => {
+        document.querySelectorAll('.palette-button').forEach(x => x.classList.remove('active'));
+        button.classList.add('active');
+        activeNote = button.dataset.note;
+        showToast(`配置種類：${button.querySelector('strong').textContent}`);
+      });
+    });
+
+    const snapSelect = document.getElementById('snapSelect');
+    const scoreGrid = document.getElementById('scoreGrid');
+    function updateGrid() {
+      const value = Number(snapSelect.value);
+      scoreGrid.style.setProperty('--division-lines', String(value * 2));
+      showToast(`${value}分刻みの表示イメージ`);
+    }
+    snapSelect.addEventListener('change', updateGrid);
+    updateGrid();
+
+    document.getElementById('snapToggle').addEventListener('click', event => {
+      snapEnabled = !snapEnabled;
+      event.target.textContent = snapEnabled ? 'ON' : 'OFF';
+      event.target.classList.toggle('primary', snapEnabled);
+      showToast(`スナップ ${snapEnabled ? 'ON' : 'OFF'}`);
+    });
+
+    let syncing = false;
+    document.getElementById('syncButton').addEventListener('click', event => {
+      syncing = !syncing;
+      event.target.textContent = syncing ? '同期入力を終了' : '同期入力を開始';
+      event.target.classList.toggle('live', syncing);
+      document.getElementById('syncDot').classList.toggle('live', syncing);
+      document.getElementById('syncText').textContent = syncing ? '入力受付中 — 外部の音を聞いてキー入力' : '待機中 — ホロドリ側で再生';
+    });
+
+    const shell = document.getElementById('scoreShell');
+    shell.addEventListener('click', event => {
+      if (event.target.classList.contains('note')) {
+        document.querySelectorAll('.note').forEach(x => x.classList.remove('selected'));
+        event.target.classList.add('selected');
+        return;
+      }
+      if (event.target !== shell && event.target !== scoreGrid) return;
+      const rect = shell.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+      const note = document.createElement('div');
+      note.className = `note ${activeNote} selected`;
+      note.style.left = `${Math.max(1, Math.min(86, (x / rect.width) * 100 - 7))}%`;
+      note.style.bottom = `${Math.max(1, Math.min(97, 100 - (y / rect.height) * 100))}%`;
+      note.style.width = activeNote === 'long' ? '18%' : '14%';
+      if (activeNote === 'long') note.classList.add('end');
+      document.querySelectorAll('.note').forEach(x => x.classList.remove('selected'));
+      shell.appendChild(note);
+      showToast('見本ノーツを配置しました（保存されません）');
+    });
+
+    document.getElementById('playButton').addEventListener('click', event => {
+      const playing = event.target.textContent === '❚❚';
+      event.target.textContent = playing ? '▶' : '❚❚';
+      showToast(playing ? '停止イメージ' : '再生イメージ（音声なし）');
+    });
+
+    document.getElementById('saveBtn').addEventListener('click', () => showToast('確認版のため保存処理は未実装です'));
+    document.getElementById('undoBtn').addEventListener('click', () => showToast('確認版のため履歴処理は未実装です'));
+
+    transferSection.style.display = 'none';
+  </script>
+</body>
+</html>
