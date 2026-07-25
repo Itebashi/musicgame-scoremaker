@@ -3,14 +3,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Musicgame Scoremaker — Pre-release Check v0.9</title>
+  <title>Musicgame Scoremaker — Pre-release Check v0.11</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 <div class="app">
   <header class="topbar">
     <div class="brand"><div class="brand-mark">♪</div><div><div class="brand-title">Musicgame Scoremaker</div><div class="brand-sub">ホロドリへ手作業で転記するためのローカル譜面下書き</div></div></div>
-    <div class="badge">完成前確認版 v0.9</div><div class="spacer"></div>
+    <div class="badge">完成前確認版 v0.11</div><div class="spacer"></div>
     <button class="btn" id="importProjectBtn">JSONを開く</button><input id="projectFile" type="file" accept="application/json,.json" hidden>
     <button class="btn" id="exportProjectBtn">JSON保存</button>
     <button class="btn primary" id="manualSaveBtn">この端末に保存</button>
@@ -46,7 +46,7 @@
           <div class="timer-card">
             <div class="statusline"><span class="dot" id="timerDot"></span><span id="timerStatus">停止中</span></div>
             <button class="bigbtn" id="timerButton">計測を開始</button>
-            <div class="grid2" style="margin-top:8px"><div class="field"><label>現在秒</label><input id="seekInput" type="number" step="0.001" value="0"></div><div class="field"><label>現在位置</label><input id="positionText" value="#1  0/8" readonly></div></div>
+            <div class="grid2" style="margin-top:8px"><div class="field"><label>現在秒</label><input id="seekInput" type="number" step="0.001" value="0"></div><div class="field"><label>現在位置</label><input id="positionText" value="#1  0/8" readonly></div><div class="field"><label>ノーツ音</label><label style="display:flex;align-items:center;gap:8px;height:29px;color:var(--text);font-size:11px"><input id="noteSoundToggle" type="checkbox" checked style="width:auto;height:auto">再生時に鳴らす</label></div><div class="field"><label>ノーツ音量</label><input id="noteSoundVolume" type="range" min="0" max="100" value="55" step="1"></div></div>
           </div>
         </section>
 
@@ -119,10 +119,10 @@
     </aside>
   </main>
 
-  <footer class="statusbar"><span class="ok">● ローカル動作</span><span>ゲーム自動操作なし</span><span>音源・画像の外部送信なし</span><span>配置・単選択・範囲選択・消しゴム</span><span>カーソルは実時間で連続移動</span><span class="spacer"></span><span id="saveStatus">自動保存待機</span></footer>
+  <footer class="statusbar"><span class="ok">● ローカル動作</span><span>ゲーム自動操作なし</span><span>音源・画像の外部送信なし</span><span>配置・単選択・範囲選択・消しゴム</span><span>カーソルは実時間で連続移動</span><span>ノーツ通過音</span><span class="spacer"></span><span id="saveStatus">自動保存待機</span></footer>
 </div>
 <div class="toast" id="toast"></div>
-<div class="modal" id="welcomeModal"><div class="modal-card"><h2>完成前確認版</h2><p>今回の版では、<strong>配置・単選択・範囲選択・消しゴム</strong>を追加しました。範囲選択した複数ノーツは一括移動・複製・削除でき、消しゴムはクリックまたはなぞるだけで即座に削除します。</p><p>録音・外部同期中のカーソルラインはガイドにスナップせず、実時間に沿って連続的に移動します。ノーツの配置だけが選択中の時間ガイドと横12列へ吸着します。</p><div class="modal-actions"><button class="btn primary" id="closeWelcome">確認する</button></div></div></div>
+<div class="modal" id="welcomeModal"><div class="modal-card"><h2>完成前確認版</h2><p>今回の版では、<strong>配置・単選択・範囲選択・消しゴム</strong>を追加しました。範囲選択した複数ノーツは一括移動・複製・削除でき、消しゴムはクリックまたはなぞるだけで即座に削除します。</p><p>録音・外部同期中のカーソルラインはガイドにスナップせず、実時間に沿って連続的に移動します。ノーツの配置だけが選択中の時間ガイドと横12列へ吸着します。</p><p>再生時にはカーソルがノーツを通過するたびに確認音が鳴ります。通常・強調・フリック・ロング始点／終点で音色を分け、音量とON／OFFを左側で調整できます。</p><div class="modal-actions"><button class="btn primary" id="closeWelcome">確認する</button></div></div></div>
   <script src="app.js"></script>
 </body>
 </html>
