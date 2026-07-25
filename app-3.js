@@ -91,8 +91,18 @@
       const a=i/32*project.measures*TPM,b=(i+1)/32*project.measures*TPM,count=project.notes.filter(n=>{const t=noteStart(n).tick;return t>=a&&t<b}).length;
       const el=document.createElement('i');el.style.height=`${Math.max(8,Math.min(100,12+count*8))}%`;bars.appendChild(el)
     }
-    const visible=els.stage.clientHeight/totalHeight()*100,start=els.stage.scrollTop/totalHeight()*100;
-    $('#timelineWindow').style.left=`${start}%`;$('#timelineWindow').style.width=`${Math.max(2,visible)}%`;
+    const chartTop=els.wrap.offsetTop;
+    const chartBottom=chartTop+totalHeight();
+    const viewTop=els.stage.scrollTop;
+    const viewBottom=viewTop+els.stage.clientHeight;
+    const visibleTop=clamp(viewTop,chartTop,chartBottom);
+    const visibleBottom=clamp(viewBottom,chartTop,chartBottom);
+    const hasVisibleChart=visibleBottom>visibleTop;
+    const start=hasVisibleChart?(chartBottom-visibleBottom)/totalHeight()*100:0;
+    const width=hasVisibleChart?(visibleBottom-visibleTop)/totalHeight()*100:0;
+    const left=clamp(start,0,100);
+    $('#timelineWindow').style.left=`${left}%`;
+    $('#timelineWindow').style.width=`${Math.max(2,clamp(width,0,100-left))}%`;
     const marker=$('#timelinePlayhead');
     if(marker){const t=running?getCurrentTime():currentTime;marker.style.left=`${clamp(t/playbackEndTime()*100,0,100)}%`;marker.dataset.time=formatTime(t)}
   }
@@ -120,7 +130,7 @@
   }
   let timelineSeeking=false;
 
-  function exportProject(){syncSettingsFromUI(false);const blob=new Blob([JSON.stringify(project,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`${project.title.replace(/[\\/:*?"<>|]/g,'_')||'score'}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);toast('JSONを保存しました')}
+  function exportProject(){syncSettingsFromUI(false);const blob=new Blob([JSON.stringify(project,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`${project.title.replace(/[\/:*?"<>|]/g,'_')||'score'}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);toast('JSONを保存しました')}
   function importProject(file){const r=new FileReader();r.onload=()=>{try{const data=JSON.parse(r.result);if(!Array.isArray(data.notes))throw new Error();project={...project,...data};project.notes=project.notes.map(normalizeNote);selectedIds.clear();history=[];future=[];renderAll();saveLocal();toast('プロジェクトを読み込みました')}catch(e){toast('このJSONは読み込めません')}};r.readAsText(file)}
 
   setupSeekingControls();
@@ -154,7 +164,7 @@
   $('#zoomIn').addEventListener('click',()=>{project.measureHeight=clamp(project.measureHeight+40,200,520);renderAll();scheduleSave()});$('#zoomOut').addEventListener('click',()=>{project.measureHeight=clamp(project.measureHeight-40,200,520);renderAll();scheduleSave()});
   $('#jumpBtn').addEventListener('click',()=>jumpMeasure($('#jumpMeasureInput').value));$('#transferMeasureInput').addEventListener('change',()=>{jumpMeasure($('#transferMeasureInput').value);updateTransfer()});$('#prevMeasureBtn').addEventListener('click',()=>{$('#transferMeasureInput').value=clamp(Number($('#transferMeasureInput').value)-1,1,project.measures);updateTransfer();jumpMeasure($('#transferMeasureInput').value)});$('#nextMeasureBtn').addEventListener('click',()=>{$('#transferMeasureInput').value=clamp(Number($('#transferMeasureInput').value)+1,1,project.measures);updateTransfer();jumpMeasure($('#transferMeasureInput').value)});
   $('#timerButton').addEventListener('click',toggleTimer);$('#playBtn').addEventListener('click',toggleTimer);$('#seekInput').addEventListener('change',()=>setCurrentTime($('#seekInput').value));$('#toStartBtn').addEventListener('click',()=>setCurrentTime(project.offset));$('#toCurrentBtn').addEventListener('click',()=>scrollToTick(timeToTick(currentTime)));
-  $('#audioFile').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;if(audioUrl)URL.revokeObjectURL(audioUrl);audioUrl=URL.createObjectURL(f);els.audio.src=audioUrl;$('#audioName').textContent=f.name;els.audio.onloadedmetadata=()=>{setCurrentTime(Math.min(currentTime,playbackEndTime()));updateTimeline()};els.audio.onended=stopTimer;toast('音源はこのブラウザ内だけで読み込みました')});
+  $('#audioFile').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;if(audioUrl)URL.revokeObjectURL(audioUrl);audioUrl=URL.createObjectURL(f);els.audio.src=audioUrl;$('#audioName').textContent=f.name;els.audio.onended=stopTimer;toast('音源はこのブラウザ内だけで読み込みました')});
   $('#referenceFiles').addEventListener('change',e=>{[...e.target.files].forEach(f=>{const url=URL.createObjectURL(f);referenceUrls.push(url);const box=document.createElement('div');box.className='reference';box.innerHTML=`<img src="${url}" alt="参考譜面"><button title="削除">×</button>`;box.querySelector('button').onclick=()=>{URL.revokeObjectURL(url);box.remove()};$('#referenceList').appendChild(box)});e.target.value=''});
   $('#manualSaveBtn').addEventListener('click',()=>{saveLocal();toast('この端末に保存しました')});$('#exportProjectBtn').addEventListener('click',exportProject);$('#importProjectBtn').addEventListener('click',()=>$('#projectFile').click());$('#projectFile').addEventListener('change',e=>{if(e.target.files[0])importProject(e.target.files[0]);e.target.value=''});
   $('#undoBtn').addEventListener('click',undo);$('#redoBtn').addEventListener('click',redo);els.stage.addEventListener('scroll',updateTimeline);window.addEventListener('resize',()=>{resizeCanvas();renderNotes()});
